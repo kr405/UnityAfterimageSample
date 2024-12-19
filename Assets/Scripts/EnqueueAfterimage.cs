@@ -21,12 +21,13 @@ namespace AfterimageSample
         {
             if (_afterimageRenderer.transform.position == _oldPosition)
             {
+                _count = 0;
                 return;
             }
             if (_count >= _intervalFrames)
             {
-                _afterimageRenderer.Enqueue();
                 _count = 0;
+                _afterimageRenderer.Enqueue();
             }
             _oldPosition = _afterimageRenderer.transform.position;
             _count++;
