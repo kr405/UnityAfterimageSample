@@ -8,7 +8,7 @@ Shader "Custom/Afterimage"
     }
     SubShader
     {
-        Tags { "RenderType"="Transparent" "Queue"="Transparent" "RenderPipeline"="UniversalPipeline"}
+        Tags { "RenderType"="Transparent" "Queue"="Transparent" "RenderPipeline"="UniversalPipeline" }
         Blend SrcAlpha OneMinusSrcAlpha
 
         Pass
@@ -34,6 +34,9 @@ Shader "Custom/Afterimage"
                 half3 normal : TEXCOORD2;
             };
 
+            TEXTURE2D(_CameraDepthTexture);
+            SAMPLER(sampler_CameraDepthTexture);
+
             CBUFFER_START(UnityPerMaterial)
             half4 _BaseColor;
             half4 _EdgeColor;
@@ -53,6 +56,17 @@ Shader "Custom/Afterimage"
 
             half4 frag (Varyings IN) : SV_Target
             {
+                // 深度テクスチャをサンプリング.
+                float2 uv = IN.positionCS.xy / _ScaledScreenParams.xy;
+                float sceneDepth = SAMPLE_TEXTURE2D(_CameraDepthTexture, sampler_CameraDepthTexture, uv).r;
+
+                // 深度を線形な値に変換.
+                sceneDepth = LinearEyeDepth(sceneDepth, _ZBufferParams);
+                float depth = LinearEyeDepth(IN.positionCS.z, _ZBufferParams);
+
+                // sceneDepth < depth = 手前にオブジェクトが描画されていたらピクセルを破棄.
+                clip(sceneDepth - depth);
+
                 // カメラへの方向ベクトルと法線の内積を使って色を補完.
                 // 輪郭に近いほどEdgeColorに、遠いほどBaseColorに近づく.
                 half3 cameraDirection = normalize(_WorldSpaceCameraPos - IN.positionWS);

@@ -6,7 +6,8 @@ namespace AfterimageSample
     public class AfterimageRenderer : MonoBehaviour
     {
         [SerializeField] Material _material;
-        [SerializeField] int _duration = 30;
+        [SerializeField] int _duration = 150;
+        [SerializeField] int _layer = 6;
 
         SkinnedMeshRenderer[] _renderers;
         Stack<AfterImage> _pool = new Stack<AfterImage>();
@@ -60,7 +61,7 @@ namespace AfterimageSample
             {
                 afterimage = new AfterImage(_renderers.Length);
             }
-            afterimage.Setup(_material, _renderers);
+            afterimage.Setup(_material, _layer, _renderers);
             _renderQueue.Enqueue(afterimage);
         }        
     }

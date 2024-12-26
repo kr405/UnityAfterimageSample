@@ -37,8 +37,9 @@ namespace AfterimageSample
         /// メッシュごとに使用するマテリアルを用意し、現在のメッシュの形状を記憶させる.
         /// </summary>
         /// <param name="material">使用するマテリアル. </param>
+        /// <param name="layer">描画するレイヤー.</param>
         /// <param name="renderers">記憶させるSkinnedMeshRendereの配列.</param>
-        public void Setup(Material material, SkinnedMeshRenderer[] renderers)
+        public void Setup(Material material, int layer, SkinnedMeshRenderer[] renderers)
         {
             for (int i = 0; i < renderers.Length; i++)
             {
@@ -50,6 +51,11 @@ namespace AfterimageSample
                 if (_params[i].material != material)
                 {
                     _params[i] = new RenderParams(material);
+                }
+                // レイヤーを設定する.
+                if (_params[i].layer != layer)
+                {
+                    _params[i].layer = layer;
                 }
                 // 現在のメッシュの状態を格納する.
                 if (_meshes[i] == null)
