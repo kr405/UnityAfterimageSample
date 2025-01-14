@@ -31,9 +31,9 @@ Shader "Custom/Afterimage"
                 float2 uv : TEXCOORD0;
                 float4 positionCS : SV_POSITION;
                 float3 positionWS : TEXCOORD1;
-                half3 normal : TEXCOORD2;
+                half3 normal : NORMAL;
             };
-
+            
             TEXTURE2D(_CameraDepthTexture);
             SAMPLER(sampler_CameraDepthTexture);
 
@@ -63,10 +63,10 @@ Shader "Custom/Afterimage"
                 // 深度を線形な値に変換.
                 sceneDepth = LinearEyeDepth(sceneDepth, _ZBufferParams);
                 float depth = LinearEyeDepth(IN.positionCS.z, _ZBufferParams);
-
+                
                 // sceneDepth < depth = 手前にオブジェクトが描画されていたらピクセルを破棄.
                 clip(sceneDepth - depth);
-
+                
                 // カメラへの方向ベクトルと法線の内積を使って色を補完.
                 // 輪郭に近いほどEdgeColorに、遠いほどBaseColorに近づく.
                 half3 cameraDirection = normalize(_WorldSpaceCameraPos - IN.positionWS);
